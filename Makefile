@@ -3,6 +3,16 @@
 build:
 	@docker build -t odrl-pap:latest .
 
+.PHONY: deploy-local
+deploy-local:
+	@echo "Deploying ODRL-PAP application..."
+	@docker tag odrl-pap:latest localhost:5000/odrl-pap:latest
+	@docker push localhost:5000/odrl-pap:latest
+	@curl -sX GET http://localhost:5000/v2/_catalog | jq -r '.repositories[]' | grep -q 'odrl-pap' \
+		&& echo "odrl-pap has been deployed to localhost:5000" \
+		|| echo "Deployment failed"
+
+
 .PHONY: start
 start:
 	@echo "Creating Docker network..."
